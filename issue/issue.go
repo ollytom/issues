@@ -274,7 +274,7 @@ var (
 	jsonFlag  = flag.Bool("json", false, "write JSON output")
 	project   = flag.String("p", "golang/go", "GitHub owner/repo name")
 	rawFlag   = flag.Bool("raw", false, "do no processing of markdown")
-	tokenFile = flag.String("token", "", "read GitHub token personal access token from `file` (default $HOME/.github-issue-token)")
+	tokenFile = flag.String("token", mustConfigPath(), "read GitHub token personal access token from `file`")
 	logHTTP   = flag.Bool("loghttp", false, "log http requests")
 )
 
@@ -732,6 +732,14 @@ func loadAuth(name string) error {
 	}
 	client = github.NewClient(&http.Client{Transport: t})
 	return nil
+}
+
+func mustConfigPath() string {
+	confdir, err := os.UserConfigDir()
+	if err != nil {
+		log.Fatal("find user configuration directory: ", err)
+	}
+	return filepath.Join(confdir, "github/token")
 }
 
 type tokenSource oauth2.Token
