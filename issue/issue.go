@@ -716,8 +716,12 @@ var client *github.Client
 var authToken string
 
 func loadAuth() {
-	const short = ".github-issue-token"
-	filename := filepath.Clean(os.Getenv("HOME") + "/" + short)
+	const short = "token"
+	d, err := os.UserConfigDir()
+	if err != nil {
+		log.Fatal("find user config dir: ", err)
+	}
+	filename := filepath.Join(d, "github", short)
 	shortFilename := filepath.Clean("$HOME/" + short)
 	if *tokenFile != "" {
 		filename = *tokenFile
@@ -725,13 +729,7 @@ func loadAuth() {
 	}
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Fatal("reading token: ", err, "\n\n"+
-			"Please create a personal access token at https://github.com/settings/tokens/new\n"+
-			"and write it to ", shortFilename, " to use this program.\n"+
-			"The token only needs the repo scope, or private_repo if you want to\n"+
-			"view or edit issues for private repositories.\n"+
-			"The benefit of using a personal access token over using your GitHub\n"+
-			"password directly is that you can limit its use and revoke it at any time.\n\n")
+		log.Fatal("reading token: ", err)
 	}
 	fi, err := os.Stat(filename)
 	if err != nil {
