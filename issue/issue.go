@@ -315,7 +315,13 @@ func main() {
 		log.Fatal("invalid form for -p argument: must be owner/repo, like golang/go")
 	}
 
-	loadAuth()
+	confDir, err := os.UserConfigDir()
+	if err != nil {
+		log.Fatalln("find config dir:", err)
+	}
+	if err := loadAuth(filepath.Join(confDir, "github", "token")); err != nil {
+		log.Fatalln("load auth:", err)
+	}
 
 	if *acmeFlag {
 		acmeMode()
@@ -687,9 +693,6 @@ func wrap(t string, prefix string) string {
 	out := ""
 	t = strings.Replace(t, "\r\n", "\n", -1)
 	max := 70
-	if *acmeFlag {
-		max = 120
-	}
 	lines := strings.Split(t, "\n")
 	for i, line := range lines {
 		if i > 0 {
@@ -715,33 +718,21 @@ var client *github.Client
 // GitHub personal access token, from https://github.com/settings/applications.
 var authToken string
 
-func loadAuth() {
-	const short = "token"
-	d, err := os.UserConfigDir()
+func loadAuth(name string) error {
+	data, err := os.ReadFile(name)
 	if err != nil {
-		log.Fatal("find user config dir: ", err)
+		return err
 	}
-	filename := filepath.Join(d, "github", short)
-	shortFilename := filepath.Clean("$HOME/" + short)
-	if *tokenFile != "" {
-		filename = *tokenFile
-		shortFilename = *tokenFile
-	}
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		log.Fatal("reading token: ", err)
-	}
-	fi, err := os.Stat(filename)
-	if err != nil {
-		log.Fatal(err)
-	} else if fi.Mode()&0077 != 0 {
-		log.Fatalf("reading token: %s mode is %#o, want %#o", shortFilename, fi.Mode()&0777, fi.Mode()&0700)
+	fi, err := os.Stat(name)
+	if fi.Mode()&0077 != 0 {
+		return fmt.Errorf("stat token: mode is %#o, want %#o", fi.Mode()&0777, fi.Mode()&0700)
 	}
 	authToken = strings.TrimSpace(string(data))
 	t := &oauth2.Transport{
 		Source: &tokenSource{AccessToken: authToken},
 	}
 	client = github.NewClient(&http.Client{Transport: t})
+	return nil
 }
 
 type tokenSource oauth2.Token
