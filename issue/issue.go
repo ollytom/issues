@@ -254,7 +254,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -586,7 +585,7 @@ func queryToListOptions(project, q string) (opt github.IssueListByRepoOptions, o
 			if opt.Milestone != "" || val == "" {
 				return
 			}
-			id := findMilestone(ioutil.Discard, project, &val)
+			id := findMilestone(io.Discard, project, &val)
 			if id == nil {
 				return
 			}

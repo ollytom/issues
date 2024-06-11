@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -39,17 +38,17 @@ func editIssue(project string, original []byte, issue *github.Issue) {
 }
 
 func editText(original []byte) []byte {
-	f, err := ioutil.TempFile("", "issue-edit-")
+	f, err := os.CreateTemp("", "issue-edit-")
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := ioutil.WriteFile(f.Name(), original, 0600); err != nil {
+	if err := os.WriteFile(f.Name(), original, 0600); err != nil {
 		log.Fatal(err)
 	}
 	if err := runEditor(f.Name()); err != nil {
 		log.Fatal(err)
 	}
-	updated, err := ioutil.ReadFile(f.Name())
+	updated, err := os.ReadFile(f.Name())
 	if err != nil {
 		log.Fatal(err)
 	}
