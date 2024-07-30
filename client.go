@@ -28,24 +28,6 @@ type Client struct {
 	token string
 }
 
-// Dial returns a Client authenticating as user.
-// Authentication credentials are loaded from $HOME/.netrc
-// using the 'api.github.com' entry, which should contain a
-// GitHub personal access token.
-// If user is the empty string, Dial uses the first line in .netrc
-// listed for api.github.com.
-//
-// For example, $HOME/.netrc might contain:
-//
-//	machine api.github.com login ken password ghp_123456789abcdef123456789abcdef12345
-func Dial(user string) (*Client, error) {
-	_, passwd, err := netrcAuth("api.github.com", user)
-	if err != nil {
-		return nil, err
-	}
-	return &Client{token: passwd}, nil
-}
-
 // NewClient returns a new client using the given GitHub personal access token (of the form "ghp_....").
 func NewClient(token string) *Client {
 	return &Client{token: token}
