@@ -23,7 +23,7 @@ import (
 
 	"9fans.net/go/acme"
 	"9fans.net/go/plumb"
-	"github.com/google/go-github/v62/github"
+	"github.com/google/go-github/v63/github"
 )
 
 const root = "/issue/"
@@ -420,7 +420,7 @@ func (w *awin) load() {
 		}
 		var buf bytes.Buffer
 		for _, m := range milestones {
-			fmt.Fprintf(&buf, "%s\t%s\t%d\n", getTime(m.DueOn).Format("2006-01-02"), getString(m.Title), getInt(m.OpenIssues))
+			fmt.Fprintf(&buf, "%s\t%s\t%d\n", m.DueOn.Format("2006-01-02"), getString(m.Title), getInt(m.OpenIssues))
 		}
 		w.PrintTabbed(buf.String())
 		w.Ctl("clean")
