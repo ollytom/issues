@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"path"
@@ -141,6 +142,9 @@ func (c *Client) do(req *http.Request) (*http.Response, error) {
 	}
 
 	req.Header.Set("Accept", "application/json")
+	if *debug {
+		log.Println(req.Method, req.URL)
+	}
 	resp, err := c.Do(req)
 	if err != nil {
 		return nil, err

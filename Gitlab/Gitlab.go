@@ -377,11 +377,12 @@ var client *Client
 var hFlag = flag.String("h", "", "gitlab hostname")
 var tFlag = flag.String("t", "", "personal access token file")
 var pFlag = flag.String("p", "gitlab-org/gitlab", "project")
+var debug = flag.Bool("d", false, "debug output")
 
 func main() {
 	flag.Parse()
 	log.SetFlags(0)
-	log.SetPrefix("Gitlab:")
+	log.SetPrefix("Gitlab: ")
 	var tokenPath string
 	if *tFlag != "" {
 		tokenPath = *tFlag
