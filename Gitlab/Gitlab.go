@@ -7,7 +7,9 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
+	"net/url"
 	"os"
 	"path"
 	"regexp"
@@ -186,7 +188,7 @@ func (w *awin) loadIssue() {
 
 func printIssueList(w io.Writer, issues []Issue) {
 	for i := range issues {
-		fmt.Fprintln(w, issues[i].ID, issues[i].Title)
+		fmt.Fprintf(w, "%d\t%s\n", issues[i].ID, issues[i].Title)
 	}
 }
 
@@ -392,18 +394,22 @@ func main() {
 			log.Fatal(err)
 		}
 		host := *hFlag
+		if host == "" {
+			u, err := url.Parse(GitlabHosted)
+			if err != nil {
+				log.Fatalln("find token: %v", err)
+			}
+			host = u.Host
+		}
 		tokenPath = path.Join(dir, "gitlab", host)
 	}
 	b, err := os.ReadFile(tokenPath)
-	if err != nil {
-		log.Fatal("read token:", err)
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		log.Fatalln("read token:", err)
 	}
 	client = &Client{
 		BaseURL: *hFlag,
 		Token:   strings.TrimSpace(string(b)),
-	}
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	project := *pFlag
