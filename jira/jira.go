@@ -1,4 +1,5 @@
-//
+// https://developer.atlassian.com/cloud/jira/platform/rest/v2/
+// https://jira.atlassian.com/rest/api/latest/issue/JRA-9
 package main
 
 import (
@@ -7,12 +8,18 @@ import (
 	"time"
 )
 
+const timestamp = "2006-01-02T15:04:05.999-0700"
+
 type Issue struct {
-	ID          string `json:"id"` // TODO(otl): int?
-	URL         string `json:"self"`
-	Key         string `json:"key"`
+	ID          string // TODO(otl): int?
+	URL         string
+	Key         string
+	Reporter    User
+	Summary     string
 	Description string
 	Project     Project
+	Created     time.Time
+	Updated     time.Time
 	Comments    []Comment
 }
 
@@ -23,8 +30,8 @@ type Project struct {
 }
 
 type Comment struct {
-	URL          string    `json:"self"`
 	ID           string    `json:"id"` // TODO(otl): int?
+	URL          string    `json:"self"`
 	Body         string    `json:"body"`
 	Created      time.Time `json:"created"`
 	Updated      time.Time `json:"updated"`
@@ -45,12 +52,11 @@ func (c *Comment) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	var err error
-	tstamp := "2006-01-02T15:04:05.999-0700"
-	c.Created, err = time.Parse(tstamp, aux.Created)
+	c.Created, err = time.Parse(timestamp, aux.Created)
 	if err != nil {
 		return fmt.Errorf("parse created time: %w", err)
 	}
-	c.Updated, err = time.Parse(tstamp, aux.Updated)
+	c.Updated, err = time.Parse(timestamp, aux.Updated)
 	if err != nil {
 		return fmt.Errorf("parse updated time: %w", err)
 	}
@@ -63,22 +69,46 @@ type User struct {
 }
 
 func (issue *Issue) UnmarshalJSON(b []byte) error {
-	type alias Issue
 	aux := &struct {
-		Fields struct {
-			Description string
-			Comment     []Comment
-			Project     Project
-		}
+		ID     string
+		Self   string
+		Key    string
+		Fields json.RawMessage
+	}{}
+	if err := json.Unmarshal(b, aux); err != nil {
+		return err
+	}
+	issue.ID = aux.ID
+	issue.URL = aux.Self
+	issue.Key = aux.Key
+
+	type alias Issue
+	iaux := &struct {
+		Created string
+		Updated string
+		Comment map[string]json.RawMessage
 		*alias
 	}{
 		alias: (*alias)(issue),
 	}
-	if err := json.Unmarshal(b, aux); err != nil {
+	if err := json.Unmarshal(aux.Fields, iaux); err != nil {
 		return err
 	}
-	issue.Comments = aux.Fields.Comment
-	issue.Description = aux.Fields.Description
-	issue.Project = aux.Fields.Project
+
+	var err error
+	issue.Created, err = time.Parse(timestamp, iaux.Created)
+	if err != nil {
+		return fmt.Errorf("created time: %w", err)
+	}
+	issue.Updated, err = time.Parse(timestamp, iaux.Updated)
+	if err != nil {
+		return fmt.Errorf("updated time: %w", err)
+	}
+
+	if bb, ok := iaux.Comment["comments"]; ok {
+		if err := json.Unmarshal(bb, &issue.Comments); err != nil {
+			return fmt.Errorf("unmarshal comments: %w", err)
+		}
+	}
 	return nil
 }
