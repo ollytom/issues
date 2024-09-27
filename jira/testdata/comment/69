@@ -1,0 +1,35 @@
+{
+    "self": "https://jira.atlassian.com/rest/api/2/issue/10148/comment/17800",
+    "id": "69",
+    "author": {
+        "self": "https://jira.atlassian.com/rest/api/2/user?username=owen%40atlassian.com",
+        "name": "owen@atlassian.com",
+        "key": "owen@atlassian.com",
+        "avatarUrls": {
+            "48x48": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=48",
+            "24x24": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=24",
+            "16x16": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=16",
+            "32x32": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=32"
+        },
+        "displayName": "Owen Fellows",
+        "active": true,
+        "timeZone": "UTC"
+    },
+    "body": "This is due to users not having a timezone set, see linked Issue.",
+    "updateAuthor": {
+        "self": "https://jira.atlassian.com/rest/api/2/user?username=owen%40atlassian.com",
+        "name": "owen@atlassian.com",
+        "key": "owen@atlassian.com",
+        "avatarUrls": {
+            "48x48": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=48",
+            "24x24": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=24",
+            "16x16": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=16",
+            "32x32": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=32"
+        },
+        "displayName": "Owen Fellows",
+        "active": true,
+        "timeZone": "UTC"
+    },
+    "created": "2003-11-17T01:55:10.760+0000",
+    "updated": "2003-11-17T01:55:10.760+0000"
+}

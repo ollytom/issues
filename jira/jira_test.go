@@ -3,24 +3,23 @@ package main
 import (
 	"encoding/json"
 	"os"
-	"path/filepath"
 	"testing"
 )
 
-func TestIssue(t *testing.T) {
-	names, err := filepath.Glob("issue*.json")
+func TestDecode(t *testing.T) {
+	dents, err := os.ReadDir("testdata/issue")
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range names {
-		f, err := os.Open(name)
+	for _, d := range dents {
+		f, err := os.Open("testdata/issue/"+d.Name())
 		if err != nil {
-			t.Fatalf("%s: %v", name, err)
+			t.Fatal(err)
 		}
-		defer f.Close()
-		var issue Issue
-		if err := json.NewDecoder(f).Decode(&issue); err != nil {
-			t.Fatalf("%s: %v", name, err)
+		var i Issue
+		if err := json.NewDecoder(f).Decode(&i); err != nil {
+			t.Errorf("decode %s: %v", f.Name(), err)
 		}
+		f.Close()
 	}
 }

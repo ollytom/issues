@@ -1,0 +1,877 @@
+{
+    "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+    "id": "10148",
+    "self": "https://jira.atlassian.com/rest/api/latest/issue/10148",
+    "key": "TEST-1",
+    "fields": {
+        "fixVersions": [
+            {
+                "self": "https://jira.atlassian.com/rest/api/2/version/15918",
+                "id": "15918",
+                "description": "",
+                "name": "4.4",
+                "archived": false,
+                "released": true,
+                "releaseDate": "2011-08-02"
+            }
+        ],
+        "resolution": {
+            "self": "https://jira.atlassian.com/rest/api/2/resolution/1",
+            "id": "1",
+            "description": "A fix for this issue is checked into the tree and tested.",
+            "name": "Fixed"
+        },
+        "labels": [
+            "affects-cloud",
+            "affects-server"
+        ],
+        "aggregatetimeoriginalestimate": 2160000,
+        "timeestimate": 2160000,
+        "issuelinks": [
+            {
+                "id": "50308",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/50308",
+                "type": {
+                    "id": "10020",
+                    "name": "Blocker",
+                    "inward": "is blocked by",
+                    "outward": "blocks",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10020"
+                },
+                "outwardIssue": {
+                    "id": "126823",
+                    "key": "JSWSERVER-2855",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/126823",
+                    "fields": {
+                        "summary": "GreenHopper Hourly Burndown Gadget - Update Every 15 Minutes or as Scheduled",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "37511",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/37511",
+                "type": {
+                    "id": "10050",
+                    "name": "Cause",
+                    "inward": "causes",
+                    "outward": "is caused by",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10050"
+                },
+                "inwardIssue": {
+                    "id": "85626",
+                    "key": "JRASERVER-17359",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/85626",
+                    "fields": {
+                        "summary": "Add timezone support to JQL dates.",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "28680",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/28680",
+                "type": {
+                    "id": "10001",
+                    "name": "Duplicate",
+                    "inward": "is duplicated by",
+                    "outward": "duplicates",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10001"
+                },
+                "inwardIssue": {
+                    "id": "42259",
+                    "key": "JRASERVER-11253",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/42259",
+                    "fields": {
+                        "summary": "Date stamp does not compensate for time zone differences",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "priority": {
+                            "self": "https://jira.atlassian.com/rest/api/2/priority/4",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/priorities/low.svg",
+                            "name": "Low",
+                            "id": "4"
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/1",
+                            "id": "1",
+                            "description": "A problem which impairs or prevents the functions of the product.",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51493&avatarType=issuetype",
+                            "name": "Bug",
+                            "subtask": false,
+                            "avatarId": 51493
+                        }
+                    }
+                }
+            },
+            {
+                "id": "10942",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/10942",
+                "type": {
+                    "id": "10001",
+                    "name": "Duplicate",
+                    "inward": "is duplicated by",
+                    "outward": "duplicates",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10001"
+                },
+                "inwardIssue": {
+                    "id": "15168",
+                    "key": "JRASERVER-2677",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/15168",
+                    "fields": {
+                        "summary": "time on jira.atlassian.com?",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "11779",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/11779",
+                "type": {
+                    "id": "10001",
+                    "name": "Duplicate",
+                    "inward": "is duplicated by",
+                    "outward": "duplicates",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10001"
+                },
+                "inwardIssue": {
+                    "id": "16922",
+                    "key": "JRASERVER-3316",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/16922",
+                    "fields": {
+                        "summary": "Created/Updated times are shown in server time zone, not the client's one",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "12982",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/12982",
+                "type": {
+                    "id": "10001",
+                    "name": "Duplicate",
+                    "inward": "is duplicated by",
+                    "outward": "duplicates",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10001"
+                },
+                "inwardIssue": {
+                    "id": "22426",
+                    "key": "JRASERVER-5539",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/22426",
+                    "fields": {
+                        "summary": "TimeZone preference",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "22245",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/22245",
+                "type": {
+                    "id": "10001",
+                    "name": "Duplicate",
+                    "inward": "is duplicated by",
+                    "outward": "duplicates",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10001"
+                },
+                "inwardIssue": {
+                    "id": "46356",
+                    "key": "JRASERVER-11930",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/46356",
+                    "fields": {
+                        "summary": "Display Time in Current User TZ",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "31127",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/31127",
+                "type": {
+                    "id": "10001",
+                    "name": "Duplicate",
+                    "inward": "is duplicated by",
+                    "outward": "duplicates",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10001"
+                },
+                "inwardIssue": {
+                    "id": "70205",
+                    "key": "JRASERVER-15149",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/70205",
+                    "fields": {
+                        "summary": "Date/Times to reflect local time zone",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "32100",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/32100",
+                "type": {
+                    "id": "10001",
+                    "name": "Duplicate",
+                    "inward": "is duplicated by",
+                    "outward": "duplicates",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10001"
+                },
+                "inwardIssue": {
+                    "id": "73554",
+                    "key": "JRASERVER-15528",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/73554",
+                    "fields": {
+                        "summary": "JIRA enterprise does not honour system TZ nor seems to provide option to override, all stamps are and keep on being 1h out of sync after migration to other JIRA instance",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "41981",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/41981",
+                "type": {
+                    "id": "10001",
+                    "name": "Duplicate",
+                    "inward": "is duplicated by",
+                    "outward": "duplicates",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10001"
+                },
+                "inwardIssue": {
+                    "id": "104230",
+                    "key": "JRASERVER-20802",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/104230",
+                    "fields": {
+                        "summary": "User Profiles > Time Zones - the ability to select a time zone per user profile",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "11606",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/11606",
+                "type": {
+                    "id": "10000",
+                    "name": "Reference",
+                    "inward": "is related to",
+                    "outward": "relates to",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10000"
+                },
+                "outwardIssue": {
+                    "id": "13031",
+                    "key": "JRASERVER-1519",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/13031",
+                    "fields": {
+                        "summary": "Allow arbitrary fields (company, phone#, etc) in user profile",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/11772",
+                            "description": "This suggestion needs more unique domain votes and comments before being reviewed by our team.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/generic.png",
+                            "name": "Gathering Interest",
+                            "id": "11772",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/2",
+                                "id": 2,
+                                "key": "new",
+                                "colorName": "default",
+                                "name": "To Do"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "27174",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/27174",
+                "type": {
+                    "id": "10000",
+                    "name": "Reference",
+                    "inward": "is related to",
+                    "outward": "relates to",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10000"
+                },
+                "outwardIssue": {
+                    "id": "39309",
+                    "key": "JRASERVER-10613",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/39309",
+                    "fields": {
+                        "summary": "Capability to customize date/time format per user",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/11772",
+                            "description": "This suggestion needs more unique domain votes and comments before being reviewed by our team.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/generic.png",
+                            "name": "Gathering Interest",
+                            "id": "11772",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/2",
+                                "id": 2,
+                                "key": "new",
+                                "colorName": "default",
+                                "name": "To Do"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            },
+            {
+                "id": "71195",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/71195",
+                "type": {
+                    "id": "10000",
+                    "name": "Reference",
+                    "inward": "is related to",
+                    "outward": "relates to",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10000"
+                },
+                "inwardIssue": {
+                    "id": "192343",
+                    "key": "JRASERVER-28939",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/192343",
+                    "fields": {
+                        "summary": "Add time-zone support for rendering date fields",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/12072",
+                            "description": "This issue has been reviewed, but needs more supporting information to gauge how pervasive the problem is.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/generic.png",
+                            "name": "Gathering Impact",
+                            "id": "12072",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/2",
+                                "id": 2,
+                                "key": "new",
+                                "colorName": "default",
+                                "name": "To Do"
+                            }
+                        },
+                        "priority": {
+                            "self": "https://jira.atlassian.com/rest/api/2/priority/4",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/priorities/low.svg",
+                            "name": "Low",
+                            "id": "4"
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/1",
+                            "id": "1",
+                            "description": "A problem which impairs or prevents the functions of the product.",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51493&avatarType=issuetype",
+                            "name": "Bug",
+                            "subtask": false,
+                            "avatarId": 51493
+                        }
+                    }
+                }
+            },
+            {
+                "id": "57958",
+                "self": "https://jira.atlassian.com/rest/api/2/issueLink/57958",
+                "type": {
+                    "id": "10000",
+                    "name": "Reference",
+                    "inward": "is related to",
+                    "outward": "relates to",
+                    "self": "https://jira.atlassian.com/rest/api/2/issueLinkType/10000"
+                },
+                "inwardIssue": {
+                    "id": "144072",
+                    "key": "JRASERVER-25303",
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/144072",
+                    "fields": {
+                        "summary": "Administer Timezone settings",
+                        "status": {
+                            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+                            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+                            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+                            "name": "Closed",
+                            "id": "6",
+                            "statusCategory": {
+                                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                                "id": 3,
+                                "key": "done",
+                                "colorName": "success",
+                                "name": "Done"
+                            }
+                        },
+                        "issuetype": {
+                            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+                            "id": "10000",
+                            "description": "",
+                            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+                            "name": "Suggestion",
+                            "subtask": false,
+                            "avatarId": 51505
+                        }
+                    }
+                }
+            }
+        ],
+        "assignee": null,
+        "status": {
+            "self": "https://jira.atlassian.com/rest/api/2/status/6",
+            "description": "Work on this issue is complete.\r\n\r\nIf it\u2019s fixed in a Server product, the resolution will be \u2018Fixed\u2019 and the Fix Version field will indicate the product version that contains the fix.\r\n\r\nIf no code changes were required, the resolution will be \u2018Duplicate', 'Won't fix', 'Handled by support', 'Timed out', or similar.",
+            "iconUrl": "https://jira.atlassian.com/images/icons/statuses/closed.png",
+            "name": "Closed",
+            "id": "6",
+            "statusCategory": {
+                "self": "https://jira.atlassian.com/rest/api/2/statuscategory/3",
+                "id": 3,
+                "key": "done",
+                "colorName": "success",
+                "name": "Done"
+            }
+        },
+        "components": [
+            {
+                "self": "https://jira.atlassian.com/rest/api/2/component/10125",
+                "id": "10125",
+                "name": "User Management - Others"
+            }
+        ],
+       "archiveddate": null,
+        "aggregatetimeestimate": 2160000,
+        "creator": {
+            "self": "https://jira.atlassian.com/rest/api/2/user?username=mike%40atlassian.com",
+            "name": "mike@atlassian.com",
+            "key": "mike@atlassian.com",
+            "avatarUrls": {
+                "48x48": "https://avatar-cdn.atlassian.com/b1a3871fb560dc486b6636467e9802fe?d=mm&s=48",
+                "24x24": "https://avatar-cdn.atlassian.com/b1a3871fb560dc486b6636467e9802fe?d=mm&s=24",
+                "16x16": "https://avatar-cdn.atlassian.com/b1a3871fb560dc486b6636467e9802fe?d=mm&s=16",
+                "32x32": "https://avatar-cdn.atlassian.com/b1a3871fb560dc486b6636467e9802fe?d=mm&s=32"
+            },
+            "displayName": "Mike Cannon-Brookes",
+            "active": true,
+            "timeZone": "Australia/Sydney"
+        },
+        "subtasks": [],
+        "reporter": {
+            "self": "https://jira.atlassian.com/rest/api/2/user?username=mike%40atlassian.com",
+            "name": "mike@atlassian.com",
+            "key": "mike@atlassian.com",
+            "avatarUrls": {
+                "48x48": "https://avatar-cdn.atlassian.com/b1a3871fb560dc486b6636467e9802fe?d=mm&s=48",
+                "24x24": "https://avatar-cdn.atlassian.com/b1a3871fb560dc486b6636467e9802fe?d=mm&s=24",
+                "16x16": "https://avatar-cdn.atlassian.com/b1a3871fb560dc486b6636467e9802fe?d=mm&s=16",
+                "32x32": "https://avatar-cdn.atlassian.com/b1a3871fb560dc486b6636467e9802fe?d=mm&s=32"
+            },
+            "displayName": "Mike Cannon-Brookes",
+            "active": true,
+            "timeZone": "Australia/Sydney"
+        },
+        "aggregateprogress": {
+            "progress": 1500,
+            "total": 2161500,
+            "percent": 0
+        },
+        "progress": {
+            "progress": 1500,
+            "total": 2161500,
+            "percent": 0
+        },
+        "votes": {
+            "self": "https://jira.atlassian.com/rest/api/2/issue/JRASERVER-9/votes",
+            "votes": 454,
+            "hasVoted": false
+        },
+        "worklog": {
+            "startAt": 0,
+            "maxResults": 20,
+            "total": 1,
+            "worklogs": [
+                {
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/10148/worklog/96804",
+                    "author": {
+                        "self": "https://jira.atlassian.com/rest/api/2/user?username=tim%40atlassian.com",
+                        "name": "tim@atlassian.com",
+                        "key": "tim@atlassian.com",
+                        "avatarUrls": {
+                            "48x48": "https://jira.atlassian.com/secure/useravatar?ownerId=tim%40atlassian.com&avatarId=2465661",
+                            "24x24": "https://jira.atlassian.com/secure/useravatar?size=small&ownerId=tim%40atlassian.com&avatarId=2465661",
+                            "16x16": "https://jira.atlassian.com/secure/useravatar?size=xsmall&ownerId=tim%40atlassian.com&avatarId=2465661",
+                            "32x32": "https://jira.atlassian.com/secure/useravatar?size=medium&ownerId=tim%40atlassian.com&avatarId=2465661"
+                        },
+                        "displayName": "TimP",
+                        "active": true,
+                        "timeZone": "America/Los_Angeles"
+                    },
+                    "updateAuthor": {
+                        "self": "https://jira.atlassian.com/rest/api/2/user?username=tim%40atlassian.com",
+                        "name": "tim@atlassian.com",
+                        "key": "tim@atlassian.com",
+                        "avatarUrls": {
+                            "48x48": "https://jira.atlassian.com/secure/useravatar?ownerId=tim%40atlassian.com&avatarId=2465661",
+                            "24x24": "https://jira.atlassian.com/secure/useravatar?size=small&ownerId=tim%40atlassian.com&avatarId=2465661",
+                            "16x16": "https://jira.atlassian.com/secure/useravatar?size=xsmall&ownerId=tim%40atlassian.com&avatarId=2465661",
+                            "32x32": "https://jira.atlassian.com/secure/useravatar?size=medium&ownerId=tim%40atlassian.com&avatarId=2465661"
+                        },
+                        "displayName": "TimP",
+                        "active": true,
+                        "timeZone": "America/Los_Angeles"
+                    },
+                    "comment": "Time submitted by matt for review CR-2",
+                    "created": "2011-05-20T05:55:22.952+0000",
+                    "updated": "2011-05-20T05:55:22.952+0000",
+                    "started": "2011-05-20T05:55:18.528+0000",
+                    "timeSpent": "25m",
+                    "timeSpentSeconds": 1500,
+                    "id": "96804",
+                    "issueId": "10148"
+                }
+            ]
+        },
+        "archivedby": null,
+        "issuetype": {
+            "self": "https://jira.atlassian.com/rest/api/2/issuetype/10000",
+            "id": "10000",
+            "description": "",
+            "iconUrl": "https://jira.atlassian.com/secure/viewavatar?size=xsmall&avatarId=51505&avatarType=issuetype",
+            "name": "Suggestion",
+            "subtask": false,
+            "avatarId": 51505
+        },
+        "timespent": 1500,
+        "project": {
+            "self": "https://jira.atlassian.com/rest/api/2/project/10240",
+            "id": "10240",
+            "key": "JRASERVER",
+            "name": "Jira Data Center",
+            "projectTypeKey": "software",
+            "avatarUrls": {
+                "48x48": "https://jira.atlassian.com/secure/projectavatar?pid=10240&avatarId=105190",
+                "24x24": "https://jira.atlassian.com/secure/projectavatar?size=small&pid=10240&avatarId=105190",
+                "16x16": "https://jira.atlassian.com/secure/projectavatar?size=xsmall&pid=10240&avatarId=105190",
+                "32x32": "https://jira.atlassian.com/secure/projectavatar?size=medium&pid=10240&avatarId=105190"
+            },
+            "projectCategory": {
+                "self": "https://jira.atlassian.com/rest/api/2/projectCategory/10031",
+                "id": "10031",
+                "description": "",
+                "name": "Atlassian Products"
+            }
+        },
+        "aggregatetimespent": 1500,
+        "resolutiondate": "2011-06-07T15:31:26.782+0000",
+        "workratio": 0,
+        "watches": {
+            "self": "https://jira.atlassian.com/rest/api/2/issue/JRASERVER-9/watchers",
+            "watchCount": 213,
+            "isWatching": false
+        },
+        "created": "2002-02-08T05:08:00.000+0000",
+         "updated": "2022-05-18T18:35:49.533+0000",
+         "timeoriginalestimate": 2160000,
+        "description": "Add time zones to user profile.     That way the dates displayed to a user are always contiguous with their local time zone, rather than the server's time zone.",
+        "timetracking": {
+            "originalEstimate": "600h",
+            "remainingEstimate": "600h",
+            "timeSpent": "25m",
+            "originalEstimateSeconds": 2160000,
+            "remainingEstimateSeconds": 2160000,
+            "timeSpentSeconds": 1500
+        },
+        "attachment": [
+            {
+                "self": "https://jira.atlassian.com/rest/api/2/attachment/45565",
+                "id": "45565",
+                "filename": "log_110314_115720______.csv",
+                "created": "2011-03-26T15:38:11.072+0000",
+                "size": 24576,
+                "mimeType": "text/csv",
+                "content": "https://jira.atlassian.com/secure/attachment/45565/log_110314_115720______.csv"
+            },
+            {
+                "self": "https://jira.atlassian.com/rest/api/2/attachment/40875",
+                "id": "40875",
+                "filename": "times.png",
+                "author": {
+                    "self": "https://jira.atlassian.com/rest/api/2/user?username=rkrishna",
+                    "name": "rkrishna",
+                    "key": "rkrishna",
+                    "avatarUrls": {
+                        "48x48": "https://jira.atlassian.com/secure/useravatar?ownerId=rkrishna&avatarId=2478834",
+                        "24x24": "https://jira.atlassian.com/secure/useravatar?size=small&ownerId=rkrishna&avatarId=2478834",
+                        "16x16": "https://jira.atlassian.com/secure/useravatar?size=xsmall&ownerId=rkrishna&avatarId=2478834",
+                        "32x32": "https://jira.atlassian.com/secure/useravatar?size=medium&ownerId=rkrishna&avatarId=2478834"
+                    },
+                    "displayName": "Roy Krishna",
+                    "active": false,
+                    "timeZone": "Australia/Sydney"
+                },
+                "created": "2010-09-21T05:31:32.198+0000",
+                "size": 39226,
+                "mimeType": "image/png",
+                "content": "https://jira.atlassian.com/secure/attachment/40875/times.png",
+                "thumbnail": "https://jira.atlassian.com/secure/thumbnail/40875/_thumb_40875.png"
+            }
+        ],
+        "summary": "User Preference: User Time Zones",
+        "environment": null,
+        "duedate": null,
+        "comment": {
+            "comments": [
+                {
+                    "self": "https://jira.atlassian.com/rest/api/2/issue/10148/comment/17800",
+                    "id": "69",
+                    "author": {
+                        "self": "https://jira.atlassian.com/rest/api/2/user?username=owen%40atlassian.com",
+                        "name": "owen@atlassian.com",
+                        "key": "owen@atlassian.com",
+                        "avatarUrls": {
+                            "48x48": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=48",
+                            "24x24": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=24",
+                            "16x16": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=16",
+                            "32x32": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=32"
+                        },
+                        "displayName": "Owen Fellows",
+                        "active": true,
+                        "timeZone": "UTC"
+                    },
+                    "body": "This is due to users not having a timezone set, see linked Issue.",
+                    "updateAuthor": {
+                        "self": "https://jira.atlassian.com/rest/api/2/user?username=owen%40atlassian.com",
+                        "name": "owen@atlassian.com",
+                        "key": "owen@atlassian.com",
+                        "avatarUrls": {
+                            "48x48": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=48",
+                            "24x24": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=24",
+                            "16x16": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=16",
+                            "32x32": "https://avatar-cdn.atlassian.com/5aa96f52989b58639779e66325f190a0?d=mm&s=32"
+                        },
+                        "displayName": "Owen Fellows",
+                        "active": true,
+                        "timeZone": "UTC"
+                    },
+                    "created": "2003-11-17T01:55:10.760+0000",
+                    "updated": "2003-11-17T01:55:10.760+0000"
+                }
+            ],
+            "maxResults": 143,
+            "total": 143,
+            "startAt": 0
+        }
+    }
+}

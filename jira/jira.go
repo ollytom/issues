@@ -1,5 +1,5 @@
 // https://developer.atlassian.com/cloud/jira/platform/rest/v2/
-// https://jira.atlassian.com/rest/api/latest/issue/JRA-9
+// https://jira.atlassian.com/rest/api/2/issue/JRA-9
 package main
 
 import (
@@ -24,9 +24,10 @@ type Issue struct {
 }
 
 type Project struct {
-	ID   string `json:"id"` // TODO(otl): int?
-	Name string `json:"name"`
-	URL  string `json:"self"`
+	ID string `json:"id"` // TODO(otl): int?
+	// Name string `json:"name"`
+	Key string `json:"key"`
+	URL string `json:"self"`
 }
 
 type Comment struct {
