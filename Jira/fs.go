@@ -15,9 +15,6 @@ type FS struct {
 	root    *fid
 }
 
-// JRASERVER/1234/issue
-// JRASERVER/1234/5678
-
 const (
 	ftypeRoot int = iota
 	ftypeProject
@@ -33,7 +30,7 @@ type fid struct {
 	rd      io.Reader
 	parent  *fid
 
-	// May not be set.
+	// May be set but only as an optimisation to skip a Stat().
 	stat *stat
 
 	// directories only
@@ -231,8 +228,8 @@ func (fsys *FS) Open(name string) (fs.File, error) {
 		return nil, fs.ErrNotExist
 	}
 
-	var err error
 	if fsys.root == nil {
+		var err error
 		fsys.root, err = makeRoot(fsys.apiRoot)
 		if err != nil {
 			return nil, fmt.Errorf("make root file: %w", err)

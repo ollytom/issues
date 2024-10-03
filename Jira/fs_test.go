@@ -7,8 +7,6 @@ import (
 	"testing"
 )
 
-const atlassianRoot = "https://jira.atlassian.com/rest/api/2"
-
 func TestIssueName(t *testing.T) {
 	f, err := os.Open("testdata/issue/TEST-1")
 	if err != nil {

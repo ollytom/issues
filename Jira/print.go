@@ -9,7 +9,7 @@ import (
 func printIssues(issues []Issue) string {
 	buf := &strings.Builder{}
 	for _, ii := range issues {
-		name := strings.TrimPrefix(ii.Key, ii.Project.Key+"-")
+		name := strings.Replace(ii.Key, "-", "/", 1)
 		fmt.Fprintf(buf, "%s/\t%s\n", name, ii.Summary)
 	}
 	return buf.String()
@@ -19,7 +19,8 @@ func printIssue(i *Issue) string {
 	buf := &strings.Builder{}
 	fmt.Fprintln(buf, "From:", i.Reporter.Name)
 	fmt.Fprintln(buf, "URL:", i.URL)
-	fmt.Fprintln(buf, "Date", i.Updated.Format(time.RFC1123Z))
+	fmt.Fprintln(buf, "Date:", i.Updated.Format(time.RFC1123Z))
+	fmt.Fprintln(buf, "Status:", i.Status.Name)
 	fmt.Fprintln(buf, "Subject:", i.Summary)
 	fmt.Fprintln(buf)
 
@@ -42,7 +43,7 @@ func printComment(c *Comment) string {
 		date = c.Updated
 	}
 	fmt.Fprintln(buf, "From:", c.Author.Name)
-	fmt.Fprintln(buf, "Date:", date)
+	fmt.Fprintln(buf, "Date:", date.Format(time.RFC1123Z))
 	fmt.Fprintln(buf)
 	fmt.Fprintln(buf, c.Body)
 	return buf.String()

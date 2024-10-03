@@ -59,40 +59,17 @@ func (w *awin) Look(text string) bool {
 		return true
 	}
 
-	wname := path.Join("/jira", w.name(), path.Base(fname))
+	wname := path.Join("/jira", fname)
 	if stat.IsDir() {
 		wname += "/"
 	}
 	win.Name(wname)
+	ww := &awin{win, w.fsys}
+	go ww.EventLoop(ww)
 	go func() {
-		defer f.Close()
-		buf := &bytes.Buffer{}
-		if stat.IsDir() {
-			dirs, err := f.(fs.ReadDirFile).ReadDir(-1)
-			if err != nil {
-				win.Err(err.Error())
-				return
-			}
-			for _, d := range dirs {
-				if d.IsDir() {
-					fmt.Fprintln(buf, d.Name()+"/")
-					continue
-				}
-				fmt.Fprintln(buf, d.Name())
-			}
-		} else {
-			if _, err := io.Copy(buf, f); err != nil {
-				win.Err(err.Error())
-				return
-			}
+		if err := ww.Get(); err != nil {
+			w.Err(err.Error())
 		}
-		w := &awin{win, w.fsys}
-		if _, err := w.Write("body", buf.Bytes()); err != nil {
-			win.Err(err.Error())
-			return
-		}
-		win.Ctl("clean")
-		go w.EventLoop(w)
 	}()
 	return true
 }
@@ -101,19 +78,60 @@ func (w *awin) Execute(cmd string) bool {
 	fields := strings.Fields(strings.TrimSpace(cmd))
 	switch fields[0] {
 	case "Get":
-		return false
+		if err := w.Get(); err != nil {
+			w.Err(err.Error())
+			return false
+		}
 	case "Search":
 		if len(fields) == 1 {
 			return false
 		}
 		query := strings.Join(fields[1:], " ")
-		go newSearch("TODO", query)
+		go newSearch(w.fsys, APIRoot, query)
 		return true
 	}
 	return false
 }
 
-func newSearch(apiRoot, query string) {
+func (w *awin) Get() error {
+	w.Ctl("dirty")
+	defer w.Ctl("clean")
+	f, err := w.fsys.Open(path.Clean(w.name()))
+	if err != nil {
+		return err
+	}
+	stat, err := f.Stat()
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+	buf := &bytes.Buffer{}
+	if stat.IsDir() {
+		dirs, err := f.(fs.ReadDirFile).ReadDir(-1)
+		if err != nil {
+			return err
+		}
+		for _, d := range dirs {
+			if d.IsDir() {
+				fmt.Fprintln(buf, d.Name()+"/")
+				continue
+			}
+			fmt.Fprintln(buf, d.Name())
+		}
+	} else {
+		if _, err := io.Copy(buf, f); err != nil {
+			return fmt.Errorf("copy %s: %w", stat.Name(), err)
+		}
+	}
+	w.Clear()
+	if _, err := w.Write("body", buf.Bytes()); err != nil {
+		return fmt.Errorf("write %s: %w", "body", err)
+	}
+	return nil
+}
+
+func newSearch(fsys fs.FS, apiRoot, query string) {
 	win, err := acme.New()
 	if err != nil {
 		acme.Errf("new window: %v", err.Error())
@@ -125,14 +143,25 @@ func newSearch(apiRoot, query string) {
 		win.Errf("search %q: %v", query, err)
 		return
 	}
+	if err := win.Fprintf("body", "Search %s\n\n", query); err != nil {
+		win.Err(err.Error())
+		return
+	}
 	_, err = win.Write("body", []byte(printIssues(issues)))
 	if err != nil {
 		win.Err(err.Error())
 	}
+	w := &awin{win, fsys}
+	go w.EventLoop(w)
 }
 
+var APIRoot = "https://jira.atlassian.com/api/rest/2"
+
 func main() {
-	fsys := &FS{apiRoot: "https://jira.atlassian.com/rest/api/2"}
+	srv := newFakeServer("testdata")
+	defer srv.Close()
+	APIRoot = srv.URL
+	fsys := &FS{apiRoot: srv.URL}
 
 	acme.AutoExit(true)
 	win, err := acme.New()

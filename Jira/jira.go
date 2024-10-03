@@ -1,5 +1,3 @@
-// https://developer.atlassian.com/cloud/jira/platform/rest/v2/
-// https://jira.atlassian.com/rest/api/2/issue/JRA-9
 package main
 
 import (
@@ -11,11 +9,14 @@ import (
 const timestamp = "2006-01-02T15:04:05.999-0700"
 
 type Issue struct {
-	ID          string // TODO(otl): int?
-	URL         string
-	Key         string
-	Reporter    User
-	Summary     string
+	ID       string // TODO(otl): int?
+	URL      string
+	Key      string
+	Reporter User
+	Summary  string
+	Status   struct {
+		Name string `json:"name"`
+	} `json:"status"`
 	Description string
 	Project     Project
 	Created     time.Time
