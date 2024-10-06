@@ -377,8 +377,6 @@ func showIssue(w io.Writer, project string, n int) (*github.Issue, error) {
 	return issue, printIssue(w, project, issue)
 }
 
-const timeFormat = "2006-01-02 15:04:05"
-
 func printIssue(w io.Writer, project string, issue *github.Issue) error {
 	if *jsonFlag {
 		showJSONIssue(w, project, issue)
@@ -389,19 +387,14 @@ func printIssue(w io.Writer, project string, issue *github.Issue) error {
 	fmt.Fprintf(w, "State: %s\n", getString(issue.State))
 	fmt.Fprintf(w, "Assignee: %s\n", getUserLogin(issue.Assignee))
 	if issue.ClosedAt != nil {
-		fmt.Fprintf(w, "Closed: %s\n", issue.ClosedAt.Format(timeFormat))
+		fmt.Fprintf(w, "Closed: %s\n", issue.ClosedAt.Format(time.DateTime))
 	}
 	fmt.Fprintf(w, "Labels: %s\n", strings.Join(getLabelNames(issue.Labels), " "))
 	fmt.Fprintf(w, "Milestone: %s\n", getMilestoneTitle(issue.Milestone))
-<<<<<<< HEAD
 	fmt.Fprintf(w, "URL: %s\n", getString(issue.HTMLURL))
 	fmt.Fprintf(w, "Reactions: %v\n", getReactions(issue.Reactions))
-	fmt.Fprintf(w, "\nReported by %s (%s)\n", getUserLogin(issue.User), getTime(issue.CreatedAt).Format(timeFormat))
-=======
-	fmt.Fprintf(w, "URL: https://github.com/%s/%s/issues/%d\n", projectOwner(project), projectRepo(project), getInt(issue.Number))
 
-	fmt.Fprintf(w, "\nReported by %s (%s)\n", getUserLogin(issue.User), issue.CreatedAt.Format(timeFormat))
->>>>>>> 1d69c70 (issue: upgrade to github.com/google/go-github/v63)
+	fmt.Fprintf(w, "\nReported by %s (%s)\n", getUserLogin(issue.User), issue.CreatedAt.Format(time.DateTime))
 	if issue.Body != nil {
 		if *rawFlag {
 			fmt.Fprintf(w, "\n%s\n\n", *issue.Body)
@@ -426,7 +419,7 @@ func printIssue(w io.Writer, project string, issue *github.Issue) error {
 			var buf bytes.Buffer
 			w := &buf
 			fmt.Fprintf(w, "%s\n", com.CreatedAt.Format(time.RFC3339))
-			fmt.Fprintf(w, "\nComment by %s (%s)\n", getUserLogin(com.User), com.CreatedAt.Format(timeFormat))
+			fmt.Fprintf(w, "\nComment by %s (%s)\n", getUserLogin(com.User), com.CreatedAt.Format(time.DateTime))
 			if com.Body != nil {
 				if *rawFlag {
 					fmt.Fprintf(w, "\n%s\n\n", *com.Body)
@@ -465,7 +458,7 @@ func printIssue(w io.Writer, project string, issue *github.Issue) error {
 			case "mentioned", "subscribed", "unsubscribed":
 				// ignore
 			default:
-				fmt.Fprintf(w, "\n* %s %s (%s)\n", getUserLogin(ev.Actor), event, ev.CreatedAt.Format(timeFormat))
+				fmt.Fprintf(w, "\n* %s %s (%s)\n", getUserLogin(ev.Actor), event, ev.CreatedAt.Format(time.DateTime))
 			case "closed", "referenced", "merged":
 				id := getString(ev.CommitID)
 				if id != "" {
@@ -474,29 +467,29 @@ func printIssue(w io.Writer, project string, issue *github.Issue) error {
 					}
 					id = " in commit " + id
 				}
-				fmt.Fprintf(w, "\n* %s %s%s (%s)\n", getUserLogin(ev.Actor), event, id, ev.CreatedAt.Format(timeFormat))
+				fmt.Fprintf(w, "\n* %s %s%s (%s)\n", getUserLogin(ev.Actor), event, id, ev.CreatedAt.Format(time.DateTime))
 				if id != "" {
 					commit, _, err := client.Git.GetCommit(context.TODO(), projectOwner(project), projectRepo(project), *ev.CommitID)
 					if err == nil {
 						fmt.Fprintf(w, "\n\tAuthor: %s <%s> %s\n\tCommitter: %s <%s> %s\n\n\t%s\n",
-							getString(commit.Author.Name), getString(commit.Author.Email), commit.Author.Date.Format(timeFormat),
-							getString(commit.Committer.Name), getString(commit.Committer.Email), commit.Committer.Date.Format(timeFormat),
+							getString(commit.Author.Name), getString(commit.Author.Email), commit.Author.Date.Format(time.DateTime),
+							getString(commit.Committer.Name), getString(commit.Committer.Email), commit.Committer.Date.Format(time.DateTime),
 							wrap(getString(commit.Message), "\t"))
 					}
 				}
 			case "assigned", "unassigned":
-				fmt.Fprintf(w, "\n* %s %s %s (%s)\n", getUserLogin(ev.Actor), event, getUserLogin(ev.Assignee), ev.CreatedAt.Format(timeFormat))
+				fmt.Fprintf(w, "\n* %s %s %s (%s)\n", getUserLogin(ev.Actor), event, getUserLogin(ev.Assignee), ev.CreatedAt.Format(time.DateTime))
 			case "labeled", "unlabeled":
-				fmt.Fprintf(w, "\n* %s %s %s (%s)\n", getUserLogin(ev.Actor), event, getString(ev.Label.Name), ev.CreatedAt.Format(timeFormat))
+				fmt.Fprintf(w, "\n* %s %s %s (%s)\n", getUserLogin(ev.Actor), event, getString(ev.Label.Name), ev.CreatedAt.Format(time.DateTime))
 			case "milestoned", "demilestoned":
 				if event == "milestoned" {
 					event = "added to milestone"
 				} else {
 					event = "removed from milestone"
 				}
-				fmt.Fprintf(w, "\n* %s %s %s (%s)\n", getUserLogin(ev.Actor), event, getString(ev.Milestone.Title), ev.CreatedAt.Format(timeFormat))
+				fmt.Fprintf(w, "\n* %s %s %s (%s)\n", getUserLogin(ev.Actor), event, getString(ev.Milestone.Title), ev.CreatedAt.Format(time.DateTime))
 			case "renamed":
-				fmt.Fprintf(w, "\n* %s changed title (%s)\n  - %s\n  + %s\n", getUserLogin(ev.Actor), ev.CreatedAt.Format(timeFormat), getString(ev.Rename.From), getString(ev.Rename.To))
+				fmt.Fprintf(w, "\n* %s changed title (%s)\n  - %s\n  + %s\n", getUserLogin(ev.Actor), ev.CreatedAt.Format(time.DateTime), getString(ev.Rename.From), getString(ev.Rename.To))
 			}
 			output = append(output, buf.String())
 		}
@@ -775,16 +768,6 @@ func getUserLogin(x *github.User) string {
 	return *x.Login
 }
 
-<<<<<<< HEAD
-func getTime(x *github.Timestamp) time.Time {
-	if x == nil {
-		return time.Time{}
-	}
-	return x.Local()
-}
-
-=======
->>>>>>> 1d69c70 (issue: upgrade to github.com/google/go-github/v63)
 func getMilestoneTitle(x *github.Milestone) string {
 	if x == nil || x.Title == nil {
 		return ""
@@ -948,16 +931,10 @@ func toJSONWithComments(project string, issue *github.Issue) *Issue {
 		}
 		for _, com := range list {
 			j.Comments = append(j.Comments, &Comment{
-<<<<<<< HEAD
-				Author:    getUserLogin(com.User),
-				Time:      getTime(com.CreatedAt),
-				Text:      getString(com.Body),
 				Reactions: getReactions(com.Reactions),
-=======
 				Author: getUserLogin(com.User),
 				Time:   com.CreatedAt.Time,
 				Text:   getString(com.Body),
->>>>>>> 1d69c70 (issue: upgrade to github.com/google/go-github/v63)
 			})
 		}
 		if resp.NextPage < page {
