@@ -1,8 +1,6 @@
-module rsc.io/github
+module olowe.co/issues
 
 go 1.21
-
-toolchain go1.22.1
 
 require (
 	9fans.net/go v0.0.7
