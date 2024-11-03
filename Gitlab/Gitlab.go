@@ -397,7 +397,7 @@ func main() {
 		if host == "" {
 			u, err := url.Parse(GitlabHosted)
 			if err != nil {
-				log.Fatalln("find token: %v", err)
+				log.Fatalf("find gitlab hostname: %v", err)
 			}
 			host = u.Host
 		}
