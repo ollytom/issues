@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"testing"
 )
@@ -12,7 +13,7 @@ func TestDecode(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, d := range dents {
-		f, err := os.Open("testdata/issue/"+d.Name())
+		f, err := os.Open("testdata/issue/" + d.Name())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -22,4 +23,17 @@ func TestDecode(t *testing.T) {
 		}
 		f.Close()
 	}
+}
+
+func TestSubtasks(t *testing.T) {
+	f, err := os.Open("testdata/subtasks")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	var is Issue
+	if err := json.NewDecoder(f).Decode(&is); err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(is.Subtasks)
 }

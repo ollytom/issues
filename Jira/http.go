@@ -5,52 +5,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 )
-
-const debug = false
 
 type Client struct {
 	*http.Client
-	debug   bool
-	apiRoot *url.URL
+	debug              bool
+	username, password string
+	apiRoot            *url.URL
 }
 
 func (c *Client) Projects() ([]Project, error) {
 	u := *c.apiRoot
-	u.Path += "/project"
-
-	resp, err := c.Get(u.String())
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	var p []Project
-
-	var p []Project
-	if err := json.NewDecoder(resp.Body).Decode(&p); err != nil {
-		return
-	return nil, fmt.Errorf("TODO")
-}
-
-func (c *Client) getDecode(path string, v any) error {
-	u := *c.apiRoot
-	resp, err := c.Get(url)
-	if err != nil {
-		...
-	}
-	return json.NewDecoder(resp.Body).Decode(&v)
-}
-
-func getProjects(apiRoot string) ([]Project, error) {
-	u := fmt.Sprintf("%s/project", apiRoot)
-	if debug {
-		fmt.Fprintln(os.Stderr, "GET", u)
-	}
-	resp, err := http.Get(u)
+	u.Path = path.Join(u.Path, "project")
+	resp, err := c.get(u.String())
 	if err != nil {
 		return nil, err
 	}
@@ -65,12 +36,9 @@ func getProjects(apiRoot string) ([]Project, error) {
 	return p, nil
 }
 
-func getProject(apiRoot, name string) (*Project, error) {
-	u := fmt.Sprintf("%s/project/%s", apiRoot, name)
-	if debug {
-		fmt.Fprintln(os.Stderr, "GET", u)
-	}
-	resp, err := http.Get(u)
+func (c *Client) Project(name string) (*Project, error) {
+	u := fmt.Sprintf("%s/project/%s", c.apiRoot, name)
+	resp, err := c.get(u)
 	if err != nil {
 		return nil, err
 	}
@@ -85,25 +53,23 @@ func getProject(apiRoot, name string) (*Project, error) {
 	return &p, nil
 }
 
-func getIssues(apiRoot, project string) ([]Issue, error) {
+func (c *Client) Issues(project string) ([]Issue, error) {
 	q := fmt.Sprintf("project = %q", project)
-	return searchIssues(apiRoot, q)
+	return c.SearchIssues(q)
 }
 
-func searchIssues(apiRoot, query string) ([]Issue, error) {
-	u, err := url.Parse(apiRoot + "/search")
-	if err != nil {
-		return nil, err
-	}
+func (c *Client) SearchIssues(query string) ([]Issue, error) {
+	u := *c.apiRoot
+	u.Path = path.Join(u.Path, "search")
 	q := make(url.Values)
 	q.Add("jql", query)
 	u.RawQuery = q.Encode()
-	if debug {
-		fmt.Fprintln(os.Stderr, "GET", u)
-	}
-	resp, err := http.Get(u.String())
+	resp, err := c.get(u.String())
 	if err != nil {
 		return nil, err
+	}
+	if resp.StatusCode == http.StatusBadRequest {
+		return nil, fmt.Errorf("bad query")
 	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("non-ok status: %s", resp.Status)
@@ -117,12 +83,14 @@ func searchIssues(apiRoot, query string) ([]Issue, error) {
 	return t.Issues, nil
 }
 
-func checkIssue(apiRoot, name string) (bool, error) {
-	u := fmt.Sprintf("%s/issue/%s", apiRoot, name)
-	if debug {
-		log.Println("HEAD", u)
+func (c *Client) CheckIssue(name string) (bool, error) {
+	u := *c.apiRoot
+	u.Path = path.Join(u.Path, "issue", name)
+	req, err := http.NewRequest(http.MethodHead, u.String(), nil)
+	if err != nil {
+		return false, err
 	}
-	resp, err := http.Head(u)
+	resp, err := c.do(req)
 	if err != nil {
 		return false, err
 	}
@@ -132,12 +100,10 @@ func checkIssue(apiRoot, name string) (bool, error) {
 	return false, nil
 }
 
-func getIssue(apiRoot, name string) (*Issue, error) {
-	u := fmt.Sprintf("%s/issue/%s", apiRoot, name)
-	if debug {
-		log.Println("GET", u)
-	}
-	resp, err := http.Get(u)
+func (c *Client) Issue(name string) (*Issue, error) {
+	u := *c.apiRoot
+	u.Path = path.Join(u.Path, "issue", name)
+	resp, err := c.get(u.String())
 	if err != nil {
 		return nil, err
 	}
@@ -152,12 +118,14 @@ func getIssue(apiRoot, name string) (*Issue, error) {
 	return &is, nil
 }
 
-func checkComment(apiRoot, ikey, id string) (bool, error) {
-	u := fmt.Sprintf("%s/issue/%s/comment/%s", apiRoot, ikey, id)
-	if debug {
-		log.Println("HEAD", u)
+func (c *Client) checkComment(ikey, id string) (bool, error) {
+	u := *c.apiRoot
+	u.Path = path.Join(u.Path, "issue", ikey, "comment", id)
+	req, err := http.NewRequest(http.MethodHead, u.String(), nil)
+	if err != nil {
+		return false, err
 	}
-	resp, err := http.Head(u)
+	resp, err := c.do(req)
 	if err != nil {
 		return false, err
 	}
@@ -167,24 +135,46 @@ func checkComment(apiRoot, ikey, id string) (bool, error) {
 	return false, nil
 }
 
-func getComment(apiRoot string, ikey, id string) (*Comment, error) {
-	u := fmt.Sprintf("%s/issue/%s/comment/%s", apiRoot, ikey, id)
-	if debug {
-		fmt.Fprintln(os.Stderr, "GET", u)
-	}
-	resp, err := http.Get(u)
+func (c *Client) Comment(ikey, id string) (*Comment, error) {
+	u := *c.apiRoot
+	u.Path = path.Join(u.Path, "issue", ikey, "comment", id)
+	resp, err := c.get(u.String())
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("non-ok status: %s", resp.Status)
-	}
 	defer resp.Body.Close()
-	var c Comment
-	if err := json.NewDecoder(resp.Body).Decode(&c); err != nil {
+	var com Comment
+	if err := json.NewDecoder(resp.Body).Decode(&com); err != nil {
 		return nil, fmt.Errorf("decode comment: %w", err)
 	}
-	return &c, nil
+	return &com, nil
+}
+
+func (c *Client) PostComment(issueKey string, body io.Reader) error {
+	b, err := io.ReadAll(body)
+	if err != nil {
+		return fmt.Errorf("read body: %w", err)
+	}
+	cm := Comment{Body: string(b)}
+	hbody, err := json.Marshal(&cm)
+	if err != nil {
+		return fmt.Errorf("to json: %w", err)
+	}
+	u := fmt.Sprintf("%s/issue/%s/comment", c.apiRoot, issueKey)
+	req, err := http.NewRequest(http.MethodPost, u, bytes.NewReader(hbody))
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := c.do(req)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode >= http.StatusBadRequest {
+		return fmt.Errorf("non-ok status: %s", resp.Status)
+	}
+	return nil
+
 }
 
 func Create(apiRoot string, issue Issue) (*Issue, error) {
@@ -227,4 +217,25 @@ func CreateComment(apiRoot, issueKey string, body io.Reader) error {
 		return fmt.Errorf("non-ok status: %s", resp.Status)
 	}
 	return nil
+}
+
+func (c *Client) get(url string) (*http.Response, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return c.do(req)
+}
+
+func (c *Client) do(req *http.Request) (*http.Response, error) {
+	if c.Client == nil {
+		c.Client = http.DefaultClient
+	}
+	if c.username != "" && c.password != "" {
+		req.SetBasicAuth(c.username, c.password)
+	}
+	if c.debug {
+		fmt.Fprintln(os.Stderr, req.Method, req.URL)
+	}
+	return c.Do(req)
 }

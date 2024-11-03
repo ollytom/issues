@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"net/http"
+	"net/url"
 	"path"
 	"testing"
 	"testing/fstest"
@@ -16,20 +17,25 @@ func handleComment(w http.ResponseWriter, req *http.Request) {
 func TestGet(t *testing.T) {
 	srv := newFakeServer("testdata")
 	defer srv.Close()
+	u, err := url.Parse(srv.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client := &Client{apiRoot: u}
 
 	project := "TEST"
 	issue := "TEST-1"
 	comment := "69"
-	if _, err := getProject(srv.URL, project); err != nil {
+	if _, err := client.Project(project); err != nil {
 		t.Fatalf("get project %s: %v", project, err)
 	}
-	if _, err := getIssues(srv.URL, project); err != nil {
+	if _, err := client.Issues(project); err != nil {
 		t.Fatalf("get %s issues: %v", project, err)
 	}
-	if _, err := getIssue(srv.URL, issue); err != nil {
+	if _, err := client.Issue(issue); err != nil {
 		t.Fatalf("get issue %s: %v", issue, err)
 	}
-	c, err := getComment(srv.URL, issue, comment)
+	c, err := client.Comment(issue, comment)
 	if err != nil {
 		t.Fatalf("get comment %s from %s: %v", comment, issue, err)
 	}
@@ -37,7 +43,7 @@ func TestGet(t *testing.T) {
 		t.Fatalf("wanted comment id %s, got %s", comment, c.ID)
 	}
 
-	fsys := &FS{apiRoot: srv.URL}
+	fsys := &FS{client: client}
 	f, err := fsys.Open("TEST/1/69")
 	if err != nil {
 		t.Fatal(err)

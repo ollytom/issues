@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
+	"os"
 	"path"
 	"strings"
 	"time"
 )
 
 type FS struct {
-	apiRoot string
-	root    *fid
+	client *Client
+	root   *fid
 }
 
 const (
@@ -24,14 +24,14 @@ const (
 )
 
 type fid struct {
-	apiRoot string
-	name    string
-	typ     int
-	rd      io.Reader
-	parent  *fid
+	*Client
+	name   string
+	typ    int
+	rd     io.Reader
+	parent *fid
 
 	// May be set but only as an optimisation to skip a Stat().
-	stat *stat
+	stat fs.FileInfo
 
 	// directories only
 	children []fs.DirEntry
@@ -52,8 +52,8 @@ func (f *fid) Type() fs.FileMode {
 func (f *fid) Info() (fs.FileInfo, error) { return f.Stat() }
 
 func (f *fid) Stat() (fs.FileInfo, error) {
-	if debug {
-		log.Println("stat", f.name)
+	if f.Client.debug {
+		fmt.Fprintln(os.Stderr, "stat", f.Name())
 	}
 	if f.stat != nil {
 		return f.stat, nil
@@ -63,25 +63,30 @@ func (f *fid) Stat() (fs.FileInfo, error) {
 	case ftypeRoot:
 		return &stat{".", int64(len(f.children)), 0o444 | fs.ModeDir, time.Time{}}, nil
 	case ftypeProject:
-		p, err := getProject(f.apiRoot, f.name)
+		p, err := f.Project(f.name)
 		if err != nil {
 			return nil, &fs.PathError{"stat", f.name, err}
 		}
 		return p, nil
 	case ftypeIssueDir, ftypeIssue:
-		is, err := getIssue(f.apiRoot, f.issueKey())
+		is, err := f.Issue(f.issueKey())
 		if err != nil {
 			return nil, &fs.PathError{"stat", f.name, err}
 		}
 		if f.typ == ftypeIssueDir {
+			f.children = issueChildren(f, is)
 			return is, nil
 		}
+		// optimisation: we might read the file soon so load the contents.
+		f.rd = strings.NewReader(printIssue(is))
 		return &stat{f.name, int64(len(printIssue(is))), 0o444, is.Updated}, nil
 	case ftypeComment:
-		c, err := getComment(f.apiRoot, f.issueKey(), f.name)
+		c, err := f.Comment(f.issueKey(), f.name)
 		if err != nil {
 			return nil, &fs.PathError{"stat", f.name, err}
 		}
+		// optimisation: we might read the file soon so load the contents.
+		f.rd = strings.NewReader(printComment(c))
 		return c, nil
 	}
 	err := fmt.Errorf("unexpected fid type %d", f.typ)
@@ -89,17 +94,20 @@ func (f *fid) Stat() (fs.FileInfo, error) {
 }
 
 func (f *fid) Read(p []byte) (n int, err error) {
+	if f.Client.debug {
+		fmt.Fprintln(os.Stderr, "read", f.Name())
+	}
 	if f.rd == nil {
 		switch f.typ {
 		case ftypeComment:
-			c, err := getComment(f.apiRoot, f.issueKey(), f.name)
+			c, err := f.Comment(f.issueKey(), f.name)
 			if err != nil {
 				err = fmt.Errorf("get comment %s: %w", f.issueKey(), err)
 				return 0, &fs.PathError{"read", f.name, err}
 			}
 			f.rd = strings.NewReader(printComment(c))
 		case ftypeIssue:
-			is, err := getIssue(f.apiRoot, f.issueKey())
+			is, err := f.Issue(f.issueKey())
 			if err != nil {
 				err = fmt.Errorf("get issue %s: %w", f.issueKey(), err)
 				return 0, &fs.PathError{"read", f.name, err}
@@ -125,57 +133,41 @@ func (f *fid) Read(p []byte) (n int, err error) {
 
 func (f *fid) Close() error {
 	f.rd = nil
+	f.stat = nil
 	return nil
 }
 
 func (f *fid) ReadDir(n int) ([]fs.DirEntry, error) {
+	if f.Client.debug {
+		fmt.Fprintln(os.Stderr, "readdir", f.Name())
+	}
 	if !f.IsDir() {
 		return nil, fmt.Errorf("not a directory")
-	}
-	if debug {
-		log.Println("readdir", f.name)
 	}
 	if f.children == nil {
 		switch f.typ {
 		case ftypeRoot:
 			return nil, fmt.Errorf("root initialised incorrectly: no dir entries")
 		case ftypeProject:
-			issues, err := getIssues(f.apiRoot, f.name)
+			issues, err := f.Issues(f.name)
 			if err != nil {
 				return nil, fmt.Errorf("get issues: %w", err)
 			}
 			f.children = make([]fs.DirEntry, len(issues))
 			for i, issue := range issues {
 				f.children[i] = &fid{
-					apiRoot: f.apiRoot,
-					name:    issue.Name(),
-					typ:     ftypeIssueDir,
-					parent:  f,
+					Client: f.Client,
+					name:   issue.Name(),
+					typ:    ftypeIssueDir,
+					parent: f,
 				}
 			}
 		case ftypeIssueDir:
-			issue, err := getIssue(f.apiRoot, f.issueKey())
+			issue, err := f.Issue(f.issueKey())
 			if err != nil {
 				return nil, fmt.Errorf("get issue %s: %w", f.name, err)
 			}
-			f.children = make([]fs.DirEntry, len(issue.Comments)+1)
-			for i, c := range issue.Comments {
-				f.children[i] = &fid{
-					apiRoot: f.apiRoot,
-					name:    c.ID,
-					typ:     ftypeComment,
-					rd:      strings.NewReader(printComment(&c)),
-					parent:  f,
-				}
-			}
-			f.children[len(f.children)-1] = &fid{
-				name:    "issue",
-				apiRoot: f.apiRoot,
-				typ:     ftypeIssue,
-				rd:      strings.NewReader(issue.Summary),
-				parent:  f,
-				stat:    &stat{"issue", int64(len(printIssue(issue))), 0o444, issue.Updated},
-			}
+			f.children = issueChildren(f, issue)
 		}
 	}
 
@@ -199,6 +191,29 @@ func (f *fid) ReadDir(n int) ([]fs.DirEntry, error) {
 	}
 	f.dirp += n
 	return d, err
+}
+
+func issueChildren(parent *fid, is *Issue) []fs.DirEntry {
+	kids := make([]fs.DirEntry, len(is.Comments)+1)
+	for i, c := range is.Comments {
+		kids[i] = &fid{
+			Client: parent.Client,
+			name:   c.ID,
+			typ:    ftypeComment,
+			rd:     strings.NewReader(printComment(&c)),
+			parent: parent,
+			stat:   &c,
+		}
+	}
+	kids[len(kids)-1] = &fid{
+		name:   "issue",
+		Client: parent.Client,
+		typ:    ftypeIssue,
+		rd:     strings.NewReader(is.Summary),
+		parent: parent,
+		stat:   &stat{"issue", int64(len(printIssue(is))), 0o444, is.Updated},
+	}
+	return kids
 }
 
 func (f *fid) issueKey() string {
@@ -230,14 +245,15 @@ func (fsys *FS) Open(name string) (fs.File, error) {
 
 	if fsys.root == nil {
 		var err error
-		fsys.root, err = makeRoot(fsys.apiRoot)
+		fsys.root, err = makeRoot(fsys.client)
 		if err != nil {
 			return nil, fmt.Errorf("make root file: %w", err)
 		}
 	}
-	if debug {
-		log.Println("open", name)
+	if fsys.client.debug {
+		fmt.Fprintln(os.Stderr, "open", name)
 	}
+
 	if name == "." {
 		f := *fsys.root
 		return &f, nil
@@ -260,22 +276,22 @@ func (fsys *FS) Open(name string) (fs.File, error) {
 	return &g, nil
 }
 
-func makeRoot(apiRoot string) (*fid, error) {
-	projects, err := getProjects(apiRoot)
+func makeRoot(client *Client) (*fid, error) {
+	projects, err := client.Projects()
 	if err != nil {
 		return nil, err
 	}
 	root := &fid{
-		apiRoot:  apiRoot,
+		Client:   client,
 		name:     ".",
 		typ:      ftypeRoot,
 		children: make([]fs.DirEntry, len(projects)),
 	}
 	for i, p := range projects {
 		root.children[i] = &fid{
-			apiRoot: apiRoot,
-			name:    p.Key,
-			typ:     ftypeProject,
+			Client: client,
+			name:   p.Key,
+			typ:    ftypeProject,
 		}
 	}
 	return root, nil
@@ -285,7 +301,7 @@ func find(dir *fid, name string) (*fid, error) {
 	if !dir.IsDir() {
 		return nil, fs.ErrNotExist
 	}
-	child := &fid{apiRoot: dir.apiRoot, parent: dir}
+	child := &fid{Client: dir.Client, parent: dir}
 	switch dir.typ {
 	case ftypeRoot:
 		for _, d := range dir.children {
@@ -300,7 +316,7 @@ func find(dir *fid, name string) (*fid, error) {
 		return nil, fs.ErrNotExist
 	case ftypeProject:
 		key := fmt.Sprintf("%s-%s", dir.name, name)
-		ok, err := checkIssue(dir.apiRoot, key)
+		ok, err := dir.CheckIssue(key)
 		if err != nil {
 			return nil, err
 		}
@@ -316,20 +332,7 @@ func find(dir *fid, name string) (*fid, error) {
 			child.typ = ftypeIssue
 			return child, nil
 		}
-		// we may have already loaded the dir entries (comments)
-		// when we loaded the parent (issue).
-		/*
-			for _, d := range dir.children {
-				if d.Name() == name {
-					c, ok := d.(*fid)
-					if !ok {
-						break
-					}
-					return c, nil
-				}
-			}
-		*/
-		ok, err := checkComment(dir.apiRoot, dir.issueKey(), name)
+		ok, err := dir.checkComment(dir.issueKey(), name)
 		if err != nil {
 			return nil, err
 		} else if !ok {

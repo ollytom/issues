@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"net/url"
+	"path"
 	"strings"
 	"time"
 )
@@ -10,21 +12,40 @@ func printIssues(issues []Issue) string {
 	buf := &strings.Builder{}
 	for _, ii := range issues {
 		name := strings.Replace(ii.Key, "-", "/", 1)
-		fmt.Fprintf(buf, "%s/\t%s\n", name, ii.Summary)
+		fmt.Fprintf(buf, "%s/issue\t%s\n", name, ii.Summary)
 	}
 	return buf.String()
 }
 
 func printIssue(i *Issue) string {
 	buf := &strings.Builder{}
-	fmt.Fprintln(buf, "From:", i.Reporter.Name)
-	fmt.Fprintln(buf, "URL:", i.URL)
+	fmt.Fprintln(buf, "From:", i.Reporter)
+	if i.Assignee.String() != "" {
+		fmt.Fprintln(buf, "Assignee:", i.Assignee)
+	}
+	if u, err := url.Parse(i.URL); err == nil {
+		u.Path = path.Join("browse", i.Key)
+		fmt.Fprintf(buf, "Archived-At: <%s>\n", u)
+	}
+	fmt.Fprintf(buf, "Archived-At: <%s>\n", i.URL)
 	fmt.Fprintln(buf, "Date:", i.Updated.Format(time.RFC1123Z))
 	fmt.Fprintln(buf, "Status:", i.Status.Name)
+	if len(i.Subtasks) > 0 {
+		s := make([]string, len(i.Subtasks))
+		for j := range i.Subtasks {
+			s[j] = i.Subtasks[j].Key
+		}
+		fmt.Fprintln(buf, "Subtasks:", strings.Join(s, ", "))
+	}
 	fmt.Fprintln(buf, "Subject:", i.Summary)
 	fmt.Fprintln(buf)
 
-	fmt.Fprintln(buf, i.Description)
+	if i.Description != "" {
+		fmt.Fprintln(buf, strings.ReplaceAll(i.Description, "\r", ""))
+	}
+	if len(i.Comments) == 0 {
+		return buf.String()
+	}
 	fmt.Fprintln(buf)
 	for _, c := range i.Comments {
 		date := c.Created
@@ -42,10 +63,10 @@ func printComment(c *Comment) string {
 	if !c.Updated.IsZero() {
 		date = c.Updated
 	}
-	fmt.Fprintln(buf, "From:", c.Author.Name)
+	fmt.Fprintln(buf, "From:", c.Author)
 	fmt.Fprintln(buf, "Date:", date.Format(time.RFC1123Z))
 	fmt.Fprintln(buf)
-	fmt.Fprintln(buf, c.Body)
+	fmt.Fprintln(buf, strings.TrimSpace(c.Body))
 	return buf.String()
 }
 

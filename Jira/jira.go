@@ -13,6 +13,7 @@ type Issue struct {
 	URL      string
 	Key      string
 	Reporter User
+	Assignee User
 	Summary  string
 	Status   struct {
 		Name string `json:"name"`
@@ -22,6 +23,7 @@ type Issue struct {
 	Created     time.Time
 	Updated     time.Time
 	Comments    []Comment
+	Subtasks []Issue
 }
 
 type Project struct {
@@ -67,7 +69,15 @@ func (c *Comment) UnmarshalJSON(b []byte) error {
 
 type User struct {
 	Name        string `json:"name"`
+	Email string `json:"emailAddress"`
 	DisplayName string `json:"displayName"`
+}
+
+func (u User) String() string {
+	if u.DisplayName == "" {
+		return u.Email
+	}
+	return fmt.Sprintf("%s <%s>", u.DisplayName, u.Email)
 }
 
 func (issue *Issue) UnmarshalJSON(b []byte) error {
@@ -98,15 +108,18 @@ func (issue *Issue) UnmarshalJSON(b []byte) error {
 	}
 
 	var err error
-	issue.Created, err = time.Parse(timestamp, iaux.Created)
-	if err != nil {
-		return fmt.Errorf("created time: %w", err)
+	if iaux.Created != "" {
+		issue.Created, err = time.Parse(timestamp, iaux.Created)
+		if err != nil {
+			return fmt.Errorf("created time: %w", err)
+		}
 	}
-	issue.Updated, err = time.Parse(timestamp, iaux.Updated)
-	if err != nil {
-		return fmt.Errorf("updated time: %w", err)
+	if iaux.Updated != "" {
+		issue.Updated, err = time.Parse(timestamp, iaux.Updated)
+		if err != nil {
+			return fmt.Errorf("updated time: %w", err)
+		}
 	}
-
 	if bb, ok := iaux.Comment["comments"]; ok {
 		if err := json.Unmarshal(bb, &issue.Comments); err != nil {
 			return fmt.Errorf("unmarshal comments: %w", err)
