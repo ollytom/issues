@@ -81,6 +81,9 @@ func (w *awin) Look(text string) bool {
 		}
 	}
 	win.Name(wname)
+	if path.Base(pathname) == "issue" {
+		win.Fprintf("tag", "Comment ")
+	}
 	ww := &awin{win, w.fsys}
 	go ww.EventLoop(ww)
 	go func() {
