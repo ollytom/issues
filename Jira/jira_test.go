@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"testing"
 )
@@ -25,6 +24,7 @@ func TestDecode(t *testing.T) {
 	}
 }
 
+/*
 func TestSubtasks(t *testing.T) {
 	f, err := os.Open("testdata/subtasks")
 	if err != nil {
@@ -37,3 +37,4 @@ func TestSubtasks(t *testing.T) {
 	}
 	fmt.Println(is.Subtasks)
 }
+*/

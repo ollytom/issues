@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"io/fs"
@@ -207,7 +208,7 @@ func newSearch(fsys fs.FS, query string) {
 	if !ok {
 		win.Errf("cannot search with filesystem type %T", fsys)
 	}
-	win.PrintTabbed("Search "+query+"\n\n")
+	win.PrintTabbed("Search " + query + "\n\n")
 	issues, err := f.client.SearchIssues(query)
 	if err != nil {
 		win.Errf("search %q: %v", query, err)
@@ -232,18 +233,18 @@ func readCreds(name string) (username, password string, err error) {
 	return u, p, nil
 }
 
-// TODO(otl): don't hardcode lol
-const host string = "audinate.atlassian.net"
+var hostFlag = flag.String("h", "jira.atlassian.com", "")
 
 func main() {
+	flag.Parse()
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("find user config dir: %v", err)
 	}
 	credPath := path.Join(home, ".config/atlassian/jira")
-	if len(os.Args) == 2 {
-		credPath = os.Args[1]
-	} else if len(os.Args) > 2 {
+	if len(flag.Args()) == 1 {
+		credPath = flag.Args()[0]
+	} else if len(flag.Args()) > 2 {
 		fmt.Fprintln(os.Stderr, usage)
 		os.Exit(2)
 	}
@@ -255,7 +256,7 @@ func main() {
 	// srv := newFakeServer("testdata")
 	// defer srv.Close()
 
-	u, err := url.Parse("https://" + host + "/rest/api/2")
+	u, err := url.Parse("https://" + *hostFlag + "/rest/api/2")
 	if err != nil {
 		log.Fatalf("parse api root url: %v", err)
 	}

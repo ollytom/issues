@@ -23,7 +23,8 @@ type Issue struct {
 	Created     time.Time
 	Updated     time.Time
 	Comments    []Comment
-	Subtasks []Issue
+	Links       []Issue
+	Subtasks    []Issue
 }
 
 type Project struct {
@@ -69,7 +70,7 @@ func (c *Comment) UnmarshalJSON(b []byte) error {
 
 type User struct {
 	Name        string `json:"name"`
-	Email string `json:"emailAddress"`
+	Email       string `json:"emailAddress"`
 	DisplayName string `json:"displayName"`
 }
 
@@ -96,9 +97,13 @@ func (issue *Issue) UnmarshalJSON(b []byte) error {
 
 	type alias Issue
 	iaux := &struct {
-		Created string
-		Updated string
-		Comment map[string]json.RawMessage
+		Created    string
+		Updated    string
+		Comment    map[string]json.RawMessage
+		IssueLinks []struct {
+			InwardIssue  *Issue
+			OutwardIssue *Issue
+		}
 		*alias
 	}{
 		alias: (*alias)(issue),
@@ -123,6 +128,14 @@ func (issue *Issue) UnmarshalJSON(b []byte) error {
 	if bb, ok := iaux.Comment["comments"]; ok {
 		if err := json.Unmarshal(bb, &issue.Comments); err != nil {
 			return fmt.Errorf("unmarshal comments: %w", err)
+		}
+	}
+	for _, l := range iaux.IssueLinks {
+		if l.InwardIssue != nil {
+			issue.Links = append(issue.Links, *l.InwardIssue)
+		}
+		if l.OutwardIssue != nil {
+			issue.Links = append(issue.Links, *l.OutwardIssue)
 		}
 	}
 	return nil

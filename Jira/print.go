@@ -20,6 +20,7 @@ func printIssues(issues []Issue) string {
 func printIssue(i *Issue) string {
 	buf := &strings.Builder{}
 	fmt.Fprintln(buf, "From:", i.Reporter)
+	fmt.Fprintln(buf, "Date:", i.Created.Format(time.RFC1123Z))
 	if i.Assignee.String() != "" {
 		fmt.Fprintln(buf, "Assignee:", i.Assignee)
 	}
@@ -28,8 +29,14 @@ func printIssue(i *Issue) string {
 		fmt.Fprintf(buf, "Archived-At: <%s>\n", u)
 	}
 	fmt.Fprintf(buf, "Archived-At: <%s>\n", i.URL)
-	fmt.Fprintln(buf, "Date:", i.Updated.Format(time.RFC1123Z))
 	fmt.Fprintln(buf, "Status:", i.Status.Name)
+	if len(i.Links) > 0 {
+		s := make([]string, len(i.Links))
+		for j := range i.Links {
+			s[j] = i.Links[j].Key
+		}
+		fmt.Fprintln(buf, "References:", strings.Join(s, ", "))
+	}
 	if len(i.Subtasks) > 0 {
 		s := make([]string, len(i.Subtasks))
 		for j := range i.Subtasks {
