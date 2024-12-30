@@ -1,4 +1,4 @@
-package main
+package jira
 
 import (
 	"bytes"
@@ -13,13 +13,13 @@ import (
 
 type Client struct {
 	*http.Client
-	debug              bool
-	username, password string
-	apiRoot            *url.URL
+	Debug              bool
+	Username, Password string
+	APIRoot            *url.URL
 }
 
 func (c *Client) Projects() ([]Project, error) {
-	u := *c.apiRoot
+	u := *c.APIRoot
 	u.Path = path.Join(u.Path, "project")
 	resp, err := c.get(u.String())
 	if err != nil {
@@ -37,7 +37,7 @@ func (c *Client) Projects() ([]Project, error) {
 }
 
 func (c *Client) Project(name string) (*Project, error) {
-	u := fmt.Sprintf("%s/project/%s", c.apiRoot, name)
+	u := fmt.Sprintf("%s/project/%s", c.APIRoot, name)
 	resp, err := c.get(u)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (c *Client) Issues(project string) ([]Issue, error) {
 }
 
 func (c *Client) SearchIssues(query string) ([]Issue, error) {
-	u := *c.apiRoot
+	u := *c.APIRoot
 	u.Path = path.Join(u.Path, "search")
 	q := make(url.Values)
 	q.Add("jql", query)
@@ -84,7 +84,7 @@ func (c *Client) SearchIssues(query string) ([]Issue, error) {
 }
 
 func (c *Client) CheckIssue(name string) (bool, error) {
-	u := *c.apiRoot
+	u := *c.APIRoot
 	u.Path = path.Join(u.Path, "issue", name)
 	req, err := http.NewRequest(http.MethodHead, u.String(), nil)
 	if err != nil {
@@ -101,7 +101,7 @@ func (c *Client) CheckIssue(name string) (bool, error) {
 }
 
 func (c *Client) Issue(name string) (*Issue, error) {
-	u := *c.apiRoot
+	u := *c.APIRoot
 	u.Path = path.Join(u.Path, "issue", name)
 	resp, err := c.get(u.String())
 	if err != nil {
@@ -119,7 +119,7 @@ func (c *Client) Issue(name string) (*Issue, error) {
 }
 
 func (c *Client) checkComment(ikey, id string) (bool, error) {
-	u := *c.apiRoot
+	u := *c.APIRoot
 	u.Path = path.Join(u.Path, "issue", ikey, "comment", id)
 	req, err := http.NewRequest(http.MethodHead, u.String(), nil)
 	if err != nil {
@@ -136,7 +136,7 @@ func (c *Client) checkComment(ikey, id string) (bool, error) {
 }
 
 func (c *Client) Comment(ikey, id string) (*Comment, error) {
-	u := *c.apiRoot
+	u := *c.APIRoot
 	u.Path = path.Join(u.Path, "issue", ikey, "comment", id)
 	resp, err := c.get(u.String())
 	if err != nil {
@@ -160,7 +160,7 @@ func (c *Client) PostComment(issueKey string, body io.Reader) error {
 	if err != nil {
 		return fmt.Errorf("to json: %w", err)
 	}
-	u := fmt.Sprintf("%s/issue/%s/comment", c.apiRoot, issueKey)
+	u := fmt.Sprintf("%s/issue/%s/comment", c.APIRoot, issueKey)
 	req, err := http.NewRequest(http.MethodPost, u, bytes.NewReader(hbody))
 	if err != nil {
 		return err
@@ -177,12 +177,12 @@ func (c *Client) PostComment(issueKey string, body io.Reader) error {
 
 }
 
-func Create(apiRoot string, issue Issue) (*Issue, error) {
+func Create(APIRoot string, issue Issue) (*Issue, error) {
 	b, err := json.Marshal(&issue)
 	if err != nil {
 		return nil, fmt.Errorf("to json: %w", err)
 	}
-	u := apiRoot + "/issue"
+	u := APIRoot + "/issue"
 	resp, err := http.Post(u, "application/json", bytes.NewReader(b))
 	if err != nil {
 		return nil, err
@@ -198,7 +198,7 @@ func Create(apiRoot string, issue Issue) (*Issue, error) {
 	return &i, nil
 }
 
-func CreateComment(apiRoot, issueKey string, body io.Reader) error {
+func CreateComment(APIRoot, issueKey string, body io.Reader) error {
 	b, err := io.ReadAll(body)
 	if err != nil {
 		return fmt.Errorf("read body: %w", err)
@@ -208,7 +208,7 @@ func CreateComment(apiRoot, issueKey string, body io.Reader) error {
 	if err != nil {
 		return fmt.Errorf("to json: %w", err)
 	}
-	u := fmt.Sprintf("%s/issue/%s/comment", apiRoot, issueKey)
+	u := fmt.Sprintf("%s/issue/%s/comment", APIRoot, issueKey)
 	resp, err := http.Post(u, "application/json", bytes.NewReader(hbody))
 	if err != nil {
 		return err
@@ -231,10 +231,10 @@ func (c *Client) do(req *http.Request) (*http.Response, error) {
 	if c.Client == nil {
 		c.Client = http.DefaultClient
 	}
-	if c.username != "" && c.password != "" {
-		req.SetBasicAuth(c.username, c.password)
+	if c.Username != "" && c.Password != "" {
+		req.SetBasicAuth(c.Username, c.Password)
 	}
-	if c.debug {
+	if c.Debug {
 		fmt.Fprintln(os.Stderr, req.Method, req.URL)
 	}
 	return c.Do(req)

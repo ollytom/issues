@@ -1,4 +1,4 @@
-package main
+package jira
 
 import (
 	"bytes"
@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"9fans.net/go/acme"
+	"olowe.co/issues/jira"
 )
 
 func init() {
@@ -190,13 +191,13 @@ func (w *awin) postComment() error {
 	if err != nil {
 		return fmt.Errorf("read body: %w", err)
 	}
-	f, ok := w.fsys.(*FS)
+	f, ok := w.fsys.(*jira.FS)
 	if !ok {
 		return fmt.Errorf("cannot write comment with filesystem type %T", w.fsys)
 	}
 	elems := strings.Split(w.name(), "/")
 	ikey := fmt.Sprintf("%s-%s", elems[0], elems[1])
-	return f.client.PostComment(ikey, bytes.NewReader(body))
+	return f.Client.PostComment(ikey, bytes.NewReader(body))
 }
 
 func newSearch(fsys fs.FS, query string) {
@@ -207,12 +208,12 @@ func newSearch(fsys fs.FS, query string) {
 	}
 	defer win.Ctl("clean")
 	win.Name("/jira/search")
-	f, ok := fsys.(*FS)
+	f, ok := fsys.(*jira.FS)
 	if !ok {
 		win.Errf("cannot search with filesystem type %T", fsys)
 	}
 	win.PrintTabbed("Search " + query + "\n\n")
-	issues, err := f.client.SearchIssues(query)
+	issues, err := f.Client.SearchIssues(query)
 	if err != nil {
 		win.Errf("search %q: %v", query, err)
 		return
@@ -220,6 +221,15 @@ func newSearch(fsys fs.FS, query string) {
 	win.PrintTabbed(printIssues(issues))
 	w := &awin{win, fsys}
 	go w.EventLoop(w)
+}
+
+func printIssues(issues []jira.Issue) string {
+	buf := &strings.Builder{}
+	for _, ii := range issues {
+		name := strings.Replace(ii.Key, "-", "/", 1)
+		fmt.Fprintf(buf, "%s/issue\t%s\n", name, ii.Summary)
+	}
+	return buf.String()
 }
 
 const usage string = "usage: Jira [keyfile]"
@@ -259,16 +269,16 @@ func main() {
 	// srv := newFakeServer("testdata")
 	// defer srv.Close()
 
-	u, err := url.Parse("https://" + *hostFlag + "/rest/api/2")
+	u, err := url.Parse("https://" + *hostFlag + "/rest/api/3")
 	if err != nil {
 		log.Fatalf("parse api root url: %v", err)
 	}
-	fsys := &FS{
-		client: &Client{
-			debug:    false,
-			apiRoot:  u,
-			username: user,
-			password: pass,
+	fsys := &jira.FS{
+		Client: &jira.Client{
+			Debug:    false,
+			APIRoot:  u,
+			Username: user,
+			Password: pass,
 		},
 	}
 

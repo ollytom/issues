@@ -1,4 +1,4 @@
-package main
+package jira
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 )
 
 type FS struct {
-	client *Client
+	Client *Client
 	root   *fid
 }
 
@@ -52,7 +52,7 @@ func (f *fid) Type() fs.FileMode {
 func (f *fid) Info() (fs.FileInfo, error) { return f.Stat() }
 
 func (f *fid) Stat() (fs.FileInfo, error) {
-	if f.Client.debug {
+	if f.Client.Debug {
 		fmt.Fprintln(os.Stderr, "stat", f.Name())
 	}
 	if f.stat != nil {
@@ -94,7 +94,7 @@ func (f *fid) Stat() (fs.FileInfo, error) {
 }
 
 func (f *fid) Read(p []byte) (n int, err error) {
-	if f.Client.debug {
+	if f.Client.Debug {
 		fmt.Fprintln(os.Stderr, "read", f.Name())
 	}
 	if f.rd == nil {
@@ -138,7 +138,7 @@ func (f *fid) Close() error {
 }
 
 func (f *fid) ReadDir(n int) ([]fs.DirEntry, error) {
-	if f.Client.debug {
+	if f.Client.Debug {
 		fmt.Fprintln(os.Stderr, "readdir", f.Name())
 	}
 	if !f.IsDir() {
@@ -200,9 +200,9 @@ func issueChildren(parent *fid, is *Issue) []fs.DirEntry {
 			Client: parent.Client,
 			name:   c.ID,
 			typ:    ftypeComment,
-			rd:     strings.NewReader(printComment(&c)),
+			rd:     strings.NewReader(printComment(&is.Comments[i])),
 			parent: parent,
-			stat:   &c,
+			stat:   &is.Comments[i],
 		}
 	}
 	kids[len(kids)-1] = &fid{
@@ -245,12 +245,12 @@ func (fsys *FS) Open(name string) (fs.File, error) {
 
 	if fsys.root == nil {
 		var err error
-		fsys.root, err = makeRoot(fsys.client)
+		fsys.root, err = makeRoot(fsys.Client)
 		if err != nil {
 			return nil, fmt.Errorf("make root file: %w", err)
 		}
 	}
-	if fsys.client.debug {
+	if fsys.Client.Debug {
 		fmt.Fprintln(os.Stderr, "open", name)
 	}
 

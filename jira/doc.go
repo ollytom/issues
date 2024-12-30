@@ -23,4 +23,4 @@ Comment 69 of issue TEST-420 can be accessed at TEST/420/69.
 https:developer.atlassian.com/cloud/jira/platform/rest/v2/
 https:jira.atlassian.com/rest/api/2/issue/JRA-9
 */
-package main
+package jira

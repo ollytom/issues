@@ -1,4 +1,4 @@
-package main
+package jira
 
 import (
 	"io"
@@ -21,7 +21,7 @@ func TestGet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	client := &Client{apiRoot: u}
+	client := &Client{APIRoot: u}
 
 	project := "TEST"
 	issue := "TEST-1"
@@ -43,7 +43,7 @@ func TestGet(t *testing.T) {
 		t.Fatalf("wanted comment id %s, got %s", comment, c.ID)
 	}
 
-	fsys := &FS{client: client}
+	fsys := &FS{Client: client}
 	f, err := fsys.Open("TEST/1/69")
 	if err != nil {
 		t.Fatal(err)
