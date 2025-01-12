@@ -1,8 +1,9 @@
 // Command jiraexport prints the named Jira issues, and their comments,
-// RFC 5322 mail message format (email).
+// in RFC 5322 mail message format (email).
 //
 // Usage:
-// 	jiraexport [ -d duration ] issue [ ... ]
+//
+//	jiraexport [ -d duration ] issue...
 //
 // The options are:
 //
@@ -10,6 +11,8 @@
 //		Exclude any issues and comments unmodified since duration.
 //		Duration may be given in the format accepted by time.ParseDuration.
 //		For example, 24h (24 hours). The default is 7 days.
+//	-c
+//		Only print comments, excluding the issue.
 //
 // # Example
 //
@@ -17,6 +20,12 @@
 //
 //	jiraexport -d 24h SRE-1234 SRE-5678
 //
+// Archive the first 500 tickets of a project in a mbox file:
+//
+//	for i in `seq 1 500`
+//	do
+//		jiraexport TEST-$i >>issues.mbox
+//	done
 package main
 
 import (
@@ -53,10 +62,30 @@ func readJiraAuth() (user, pass string, err error) {
 	return u, p, nil
 }
 
+func copyMessage(w io.Writer, msg *mail.Message) (n int, err error) {
+	for k, v := range msg.Header {
+		for i := range v {
+			nn, err := fmt.Fprintf(w, "%s: %s\n", k, v[i])
+			n += nn
+			if err != nil {
+				return n, fmt.Errorf("write header field %s: %w", k, err)
+			}
+		}
+	}
+	nnn, err := fmt.Fprintln(w)
+	n += nnn
+	if err != nil {
+		return n, err
+	}
+	nn, err := io.Copy(w, msg.Body)
+	return n + int(nn), err
+}
+
 const usage string = "jiraexport [-d duration] [-u url] issue [...]"
 
 var since = flag.Duration("d", 7*24*time.Hour, "exclude activity older than this duration")
 var apiRoot = flag.String("u", "http://[::1]:8080", "base URL for the JIRA API")
+var onlyComments = flag.Bool("c", false, "only print comments")
 
 func init() {
 	log.SetFlags(0)
@@ -93,38 +122,24 @@ func main() {
 			continue
 		}
 		dir := path.Join(proj, num)
-		f, err := fsys.Open(path.Join(dir, "issue"))
+		issue, err := fsys.Open(path.Join(dir, "issue"))
 		if err != nil {
 			log.Println(err)
 			continue
 		}
-		info, err := f.Stat()
+		msg, err := mail.ReadMessage(issue)
 		if err != nil {
-			f.Close()
-			log.Println(err)
+			log.Println("read issue:", err)
+			issue.Close()
 			continue
 		}
-		if time.Since(info.ModTime()) >= *since {
-			f.Close()
-			continue
-		}
-		msg, err := mail.ReadMessage(f)
-		if err != nil {
-			f.Close()
-			log.Println(err)
-			continue
-		}
-		// fmt.Println("From nobody", info.ModTime().Format(time.ANSIC))
-		fmt.Println("Subject:", msg.Header.Get("Subject"))
-		/*
-			if _, err := io.Copy(os.Stdout, f); err != nil {
-				f.Close()
-				log.Println(err)
-				continue
+		subject := msg.Header.Get("Subject")
+		if !*onlyComments {
+			if _, err := copyMessage(os.Stdout, msg); err != nil {
+				log.Println("print issue:", err)
 			}
-		*/
-		fmt.Println()
-		f.Close()
+		}
+		issue.Close()
 
 		dents, err := fs.ReadDir(fsys, dir)
 		if err != nil {
@@ -148,12 +163,13 @@ func main() {
 				log.Println(err)
 				continue
 			}
+			fmt.Println()
 			fmt.Println("From nobody", info.ModTime().Format(time.ANSIC))
+			fmt.Println("Subject:", subject)
 			if _, err := io.Copy(os.Stdout, f); err != nil {
 				log.Println(err)
 			}
 			f.Close()
-			fmt.Println()
 		}
 	}
 }
