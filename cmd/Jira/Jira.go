@@ -1,4 +1,4 @@
-package jira
+package main
 
 import (
 	"bytes"
@@ -8,7 +8,6 @@ import (
 	"io"
 	"io/fs"
 	"log"
-	"net/url"
 	"os"
 	"path"
 	"regexp"
@@ -151,11 +150,11 @@ func (w *awin) Get(f fs.File) error {
 			return err
 		}
 	}
+
 	stat, err := f.Stat()
 	if err != nil {
 		return err
 	}
-
 	defer f.Close()
 	if stat.IsDir() {
 		dirs, err := f.(fs.ReadDirFile).ReadDir(-1)
@@ -174,6 +173,7 @@ func (w *awin) Get(f fs.File) error {
 		w.PrintTabbed(buf.String())
 		return nil
 	}
+
 	b, err := io.ReadAll(f)
 	if err != nil {
 		return fmt.Errorf("read %s: %w", stat.Name(), err)
@@ -246,10 +246,7 @@ func readCreds(name string) (username, password string, err error) {
 	return u, p, nil
 }
 
-var hostFlag = flag.String("h", "jira.atlassian.com", "")
-
 func main() {
-	flag.Parse()
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("find user config dir: %v", err)
@@ -261,24 +258,20 @@ func main() {
 		fmt.Fprintln(os.Stderr, usage)
 		os.Exit(2)
 	}
-	user, pass, err := readCreds(credPath)
+	config, err := readConfig(credPath)
 	if err != nil {
-		log.Fatalf("read credentials: %v", err)
+		log.Fatalf("read configuration: %v", err)
 	}
 
 	// srv := newFakeServer("testdata")
 	// defer srv.Close()
 
-	u, err := url.Parse("https://" + *hostFlag + "/rest/api/3")
-	if err != nil {
-		log.Fatalf("parse api root url: %v", err)
-	}
 	fsys := &jira.FS{
 		Client: &jira.Client{
 			Debug:    false,
-			APIRoot:  u,
-			Username: user,
-			Password: pass,
+			APIRoot:  config.BaseURL,
+			Username: config.Username,
+			Password: config.Password,
 		},
 	}
 
