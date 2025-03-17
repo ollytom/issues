@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"flag"
 	"fmt"
@@ -197,7 +196,8 @@ func (w *awin) postComment() error {
 	}
 	elems := strings.Split(w.name(), "/")
 	ikey := fmt.Sprintf("%s-%s", elems[0], elems[1])
-	return f.Client.PostComment(ikey, bytes.NewReader(body))
+	jtf := toJTF(string(body))
+	return f.Client.PostComment(ikey, strings.NewReader(jtf))
 }
 
 func newSearch(fsys fs.FS, query string) {
