@@ -232,7 +232,7 @@ func printIssues(issues []jira.Issue) string {
 	return buf.String()
 }
 
-const usage string = "usage: Jira [keyfile]"
+const usage string = "usage: Jira [-d]"
 
 func readCreds(name string) (username, password string, err error) {
 	b, err := os.ReadFile(name)
@@ -244,6 +244,13 @@ func readCreds(name string) (username, password string, err error) {
 		return "", "", fmt.Errorf("missing userpass field separator %q", ":")
 	}
 	return u, p, nil
+}
+
+var debug bool
+
+func init() {
+	flag.BoolVar(&debug, "d", false, "debug")
+	flag.Parse()
 }
 
 func main() {
@@ -268,7 +275,7 @@ func main() {
 
 	fsys := &jira.FS{
 		Client: &jira.Client{
-			Debug:    false,
+			Debug:    debug,
 			APIRoot:  config.BaseURL,
 			Username: config.Username,
 			Password: config.Password,
